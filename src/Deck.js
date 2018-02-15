@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {
     Animated,
+    LayoutAnimation,
+    UIManager,
     PanResponder,
     View,
     Dimensions
@@ -45,6 +47,11 @@ class Deck extends Component {
         });
 
         this.state = { panResponder, position, index: 0 };
+    }
+
+    componentWillUpdate() {
+        UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+        LayoutAnimation.spring();
     }
 
     onSwipeComplete(direction) {
