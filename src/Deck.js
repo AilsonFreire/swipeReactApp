@@ -36,7 +36,7 @@ class Deck extends Component {
             onPanResponderRelease: (event, gesture) => {
                 if (gesture.dx > SWIPE_THRESHOLD) {
                     this.forceSwipe('right');
-                } else if (gesture.dx < -SWIPE_THRESHOLD) {
+                } else if (gesture.dx < SWIPE_THRESHOLD) {
                     this.forceSwipe('left');
                 } else {
                     this.resetPosition();
@@ -63,7 +63,7 @@ class Deck extends Component {
           */
         const { position } = this.state;
         const rotate = position.x.interpolate({
-            inputRange: [-SCREEN_WIDTH * 1.5, 0, SCREEN_WIDTH * 1.5],
+            inputRange: [-SCREEN_WIDTH * 2.0, 0, SCREEN_WIDTH * 2.0],
             outputRange: ['-120deg', '0deg', '120deg']
         });
         return {
@@ -87,8 +87,11 @@ class Deck extends Component {
     }
     
     renderCards() {
+        /*There are two types of index: this.props. and index to refers to index of array 
+        comming to map data */
         return this.props.data.map((item, i) => {
-            if (i === 0) {
+            if (i < this.state.index) return null; 
+            if (i === this.state.index) {
                 return (
                     <Animated.View
                         key={item.id}
