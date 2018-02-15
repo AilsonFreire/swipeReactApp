@@ -36,7 +36,7 @@ class Deck extends Component {
             onPanResponderRelease: (event, gesture) => {
                 if (gesture.dx > SWIPE_THRESHOLD) {
                     this.forceSwipe('right');
-                } else if (gesture.dx < SWIPE_THRESHOLD) {
+                } else if (gesture.dx < -SWIPE_THRESHOLD) {
                     this.forceSwipe('left');
                 } else {
                     this.resetPosition();
@@ -51,7 +51,7 @@ class Deck extends Component {
         const { onSwipeRight, onSwipeLeft, data } = this.props;
         const item = data[this.state.index];
 
-        direction === 'rigth' ? onSwipeRight(item) : onSwipeLeft(item);
+        direction === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
         this.state.position.setValue({ x: 0, y: 0 });
         this.setState({ index: this.state.index + 1 });
     }
@@ -79,7 +79,7 @@ class Deck extends Component {
     }
     /*The same way to above but using timing to set the card out of screen*/
     forceSwipe(direction) {
-        const x = direction === 'rigth' ? SCREEN_WIDTH : -SCREEN_WIDTH; 
+        const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH; 
         Animated.timing(this.state.position, {
             toValue: { x, y: 0 },
             duration: SWIPE_OUT_DURATION
@@ -87,6 +87,7 @@ class Deck extends Component {
     }
     
     renderCards() {
+        if (this.state.index >= this.props.data.length) return this.props.renderNoMoreCards(); 
         /*There are two types of index: this.props. and index to refers to index of array 
         comming to map data */
         return this.props.data.map((item, i) => {
