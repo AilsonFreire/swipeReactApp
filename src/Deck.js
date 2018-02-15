@@ -8,12 +8,12 @@ import {
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
-const SWIPE_OUT_DURATION = 250; 
+const SWIPE_OUT_DURATION = 250;
 
 class Deck extends Component {
     static defaultProps = {
-        onSwipeRight: () => {},
-        onSwipeLeft: () => {}
+        onSwipeRight: () => { },
+        onSwipeLeft: () => { }
     }
 
     constructor(props) {
@@ -55,7 +55,7 @@ class Deck extends Component {
         this.state.position.setValue({ x: 0, y: 0 });
         this.setState({ index: this.state.index + 1 });
     }
-    
+
     getCardStyle() {
         /*Return a object with getLayout first properties
           that returns an object that has information about exactly
@@ -79,31 +79,38 @@ class Deck extends Component {
     }
     /*The same way to above but using timing to set the card out of screen*/
     forceSwipe(direction) {
-        const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH; 
+        const x = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
         Animated.timing(this.state.position, {
             toValue: { x, y: 0 },
             duration: SWIPE_OUT_DURATION
         }).start(() => this.onSwipeComplete(direction));
     }
-    
+
     renderCards() {
-        if (this.state.index >= this.props.data.length) return this.props.renderNoMoreCards(); 
+        if (this.state.index >= this.props.data.length) return this.props.renderNoMoreCards();
         /*There are two types of index: this.props. and index to refers to index of array 
         comming to map data */
         return this.props.data.map((item, i) => {
-            if (i < this.state.index) return null; 
+            if (i < this.state.index) return null;
             if (i === this.state.index) {
                 return (
                     <Animated.View
                         key={item.id}
-                        style={this.getCardStyle()}
+                        style={[this.getCardStyle(), styles.cardStyle, { zIndex: 100 }]}
                         {...this.state.panResponder.panHandlers}
                     >
                         {this.props.renderCard(item)}
                     </Animated.View>
                 );
             }
-            return this.props.renderCard(item);
+            return (
+                <View
+                    key={item.id}
+                    style={[styles.cardStyle, { top: 10 * (i - this.state.index), zIndex: 5 }]}
+                >
+                    {this.props.renderCard(item)}
+                </View>
+            );
         });
     }
 
@@ -115,5 +122,13 @@ class Deck extends Component {
         );
     }
 }
+
+const styles = {
+    cardStyle: {
+        position: 'absolute',
+        width: SCREEN_WIDTH,
+        zIndex: -1
+    }
+};
 
 export default Deck;
